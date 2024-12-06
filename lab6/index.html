@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pickle Monitor Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pickle Monitor Dashboard</h1>
+    <p>Real-time updates from the Raspberry Pi</p>
+    <table>
+        <tr>
+            <th>Timestamp</th>
+            <td id="current_time">Loading...</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td id="status">Loading...</td>
+        </tr>
+        <tr>
+            <th>Temperature</th>
+            <td id="temperature">Loading...</td>
+        </tr>
+        <tr>
+            <th>Weather Condition</th>
+            <td id="weather_condition">Loading...</td>
+        </tr>
+        <tr>
+            <th>People Count</th>
+            <td id="people_count">Loading...</td>
+        </tr>
+    </table>
+
+    <script>
+        // Flask API URL
+        const apiUrl = "http://192.168.4.69:5000/detect_status";
+
+        async function fetchData() {
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                // Update the table with received data
+                document.getElementById("current_time").innerText = data.current_time || "N/A";
+                document.getElementById("status").innerText = data.status || "N/A";
+                document.getElementById("temperature").innerText = `${data.temperature || "N/A"} `;
+                document.getElementById("weather_condition").innerText = data.weather_condition || "N/A";
+                document.getElementById("people_count").innerText = data.people_count || "N/A";
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Fetch data every 5 seconds
+        setInterval(fetchData, 5000);
+        // Fetch initial data on page load
+        fetchData();
+    </script>
+</body>
+</html>
